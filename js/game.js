@@ -229,7 +229,7 @@
       '<div class="clue-zone__head"><h3>线索档案</h3><span class="clue-count">' + revealed.length + ' / ' + crop.clues.length + '</span></div>' +
       '<div class="clue-list" id="clue-list">' +
       revealed.map(function (cl, i) {
-        return '<article class="clue-card" data-clue="' + i + '" style="animation-delay:' + (i * 0.12) + 's">' +
+        return '<article class="clue-card" data-clue="' + i + '" style="animation-delay:' + (i * 0.07) + 's">' +
           '<div class="clue-card__no">线索 ' + (i + 1) + '</div>' +
           '<div class="clue-card__dim">' + U.esc(cl.dimension) + '</div>' +
           '<p class="clue-card__text">' + U.esc(cl.text) + '</p>' +
@@ -796,8 +796,9 @@
     var needH = scene.scrollHeight;
     var needW = scene.scrollWidth;
     if (needH <= 0 || needW <= 0) return;
-    var scale = Math.min(1, availH / needH, availW / needW);
-    if (scale < 0.999) {
+    /* 内容装不下 → 等比缩小；内容明显偏小 → 适度放大，让画面更饱满（上限 1.18 倍，避免过度拉伸） */
+    var scale = Math.min(availH / needH, availW / needW, 1.18);
+    if (Math.abs(scale - 1) > 0.01) {
       scene.style.transformOrigin = 'top center';
       scene.style.transform = 'scale(' + scale.toFixed(3) + ')';
     }

@@ -40,10 +40,10 @@
 
   --fs-hero: clamp(38px, 4.6vw, 76px);
   --fs-h1: clamp(28px, 2.9vw, 46px);
-  --fs-h2: clamp(22px, 2.1vw, 34px);
-  --fs-q: clamp(24px, 2.5vw, 42px);
-  --fs-lead: clamp(17px, 1.35vw, 25px);
-  --fs-body: clamp(15px, 1.15vw, 21px);
+  --fs-h2: clamp(24px, 2.2vw, 36px);
+  --fs-q: clamp(26px, 2.6vw, 44px);
+  --fs-lead: clamp(20px, 1.7vw, 30px);
+  --fs-body: clamp(16px, 1.2vw, 22px);
   --fs-sm: clamp(13px, .95vw, 17px);
 
   --topbar-h: clamp(52px, 5.2vh, 68px);
@@ -249,7 +249,7 @@ body.host-open #stage { padding-right: calc(var(--host-w) + 20px); }
 @keyframes blink { 50% { opacity: 0; } }
 
 /* 4.2 调查界面 */
-.scene--l1 { display: grid; grid-template-columns: minmax(230px, .78fr) minmax(0, 1.5fr) minmax(260px, 1fr); gap: clamp(14px, 1.7vw, 28px); align-items: start; }
+.scene--l1 { display: grid; grid-template-columns: minmax(240px, .8fr) minmax(0, 1.85fr) minmax(260px, 1fr); gap: clamp(14px, 1.7vw, 28px); align-items: start; }
 
 .casefile {
   background: var(--panel); border-radius: var(--r-lg); padding: 20px;
@@ -280,22 +280,22 @@ body.host-open #stage { padding-right: calc(var(--host-w) + 20px); }
 .clue-card {
   position: relative;
   background: linear-gradient(150deg, #FFFDF7, #F6EDD9);
-  border-radius: var(--r-md); padding: 16px 18px 16px 22px;
+  border-radius: var(--r-md); padding: 18px 20px 18px 24px;
   box-shadow: var(--sh-2);
-  border-left: 6px solid var(--gold);
-  animation: clueIn .55s cubic-bezier(.2, .9, .3, 1.15) both;
+  border-left: 7px solid var(--gold);
+  animation: clueIn .4s cubic-bezier(.2, .9, .3, 1.15) both;
   overflow: hidden;
 }
 @keyframes clueIn { from { opacity: 0; transform: translateX(-24px) rotateY(-14deg); } to { opacity: 1; transform: none; } }
 .clue-card.scanning::after {
   content: ''; position: absolute; top: 0; left: -40%; width: 40%; height: 100%;
   background: linear-gradient(100deg, transparent, rgba(232, 180, 74, .55), transparent);
-  animation: scanSweep 1.1s ease-out 1;
+  animation: scanSweep .75s ease-out 1;
 }
 @keyframes scanSweep { to { left: 120%; } }
-.clue-card__no { font-size: clamp(11px, .82vw, 14px); font-weight: 800; color: var(--gold-deep); letter-spacing: .18em; }
+.clue-card__no { font-size: clamp(13px, .95vw, 16px); font-weight: 800; color: var(--gold-deep); letter-spacing: .18em; }
 .clue-card__dim {
-  display: inline-block; font-size: clamp(10px, .74vw, 13px); font-weight: 700;
+  display: inline-block; font-size: clamp(12px, .9vw, 16px); font-weight: 700;
   background: var(--blue-soft); color: var(--blue); padding: 3px 10px; border-radius: 999px; margin-left: 8px;
 }
 .clue-card__text { font-size: var(--fs-lead); line-height: 1.72; margin: 8px 0 0; color: var(--ink); }
@@ -805,7 +805,7 @@ body.is-paused #stage { filter: blur(3px) saturate(.6); pointer-events: none; }
 @media (max-width: 1400px) {
   .scene--l1 { grid-template-columns: minmax(200px, .8fr) minmax(0, 1.4fr) minmax(220px, 1fr); }
 }
-@media (max-width: 1180px) {
+@media (max-width: 960px) {
   .scene--l1 { grid-template-columns: 1fr; }
   .casefile { position: static; }
   .scene--brief { grid-template-columns: 1fr; }
