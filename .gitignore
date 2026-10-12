@@ -1,0 +1,11 @@
+# 本地工作记忆（含项目笔记，不上传到公开仓库）
+.workbuddy/
+
+# WorkBuddy 内置发布记录
+.wbapp_*.genie
+
+# 依赖 / 系统文件
+node_modules/
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>米侦探：粮食王国大追捕 · 小学粮食安全主题宣讲互动游戏</title>
+<meta name="description" content="面向小学生的粮食安全主题宣讲互动教学游戏，三关闯关、主持人控场、离线可用。">
+<meta name="theme-color" content="#232C55">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ========== 启动遮罩 ========== -->
+<div id="boot-veil">
+  <div style="text-align:center">
+    <div class="boot__logo">🔍</div>
+    <div class="boot__title">米侦探</div>
+    <div class="boot__sub">粮食王国大追捕</div>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- ========== 场景背景 ========== -->
+  <div id="bg-layer" class="bg-layer"></div>
+
+  <!-- ========== 顶栏 ========== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-logo">🔍</span>
+      <div class="brand-text">
+        <b>米侦探</b>
+        <small>粮食王国大追捕</small>
+      </div>
+    </div>
+
+    <nav class="stage-progress" id="stage-progress" aria-label="关卡进度"></nav>
+
+    <div class="topbar-right">
+      <button class="icon-btn" id="btn-sound" title="音效开关（M）">🔊</button>
+      <button class="icon-btn" id="btn-print-top" title="打印纸质线索卡">🖨️ 线索卡</button>
+      <button class="icon-btn" id="btn-restart-top" title="重新开始">🔁</button>
+      <button class="icon-btn" id="btn-fullscreen" title="全屏投影（F）">⛶ 全屏</button>
+      <button class="icon-btn" id="btn-host" title="主持人控制台（H）">🎛️ 主持人</button>
+    </div>
+  </header>
+
+  <!-- ========== 主舞台 ========== -->
+  <main id="stage" aria-live="polite"></main>
+
+  <!-- ========== 米侦探 ========== -->
+  <div class="detective-dock">
+    <div class="bubble" id="detective-bubble" role="status"></div>
+    <div id="detective-figure"></div>
+  </div>
+
+  <!-- ========== 主持人控制台 ========== -->
+  <aside class="host-panel" id="host-panel" aria-label="主持人控制台">
+    <div class="hp__head">
+      <h3>🎛️ 主持人控制台</h3>
+      <button id="hp-close" title="收起（H）">✕</button>
+    </div>
+    <div class="hp__body">
+      <section class="hp__sec" id="hp-global" data-title="全局控制"></section>
+      <section class="hp__sec" id="hp-context" data-title="本阶段操作"></section>
+      <section class="hp__sec" id="hp-clues" data-title="纸质线索奖励"></section>
+      <section class="hp__sec" id="hp-jump" data-title="关卡跳转"></section>
+    </div>
+  </aside>
+
+  <!-- ========== 暂停遮罩 ========== -->
+  <div class="pause-veil" id="pause-veil">
+    <div>
+      <div class="pause-veil__icon">⏸️</div>
+      <h2>游戏已暂停</h2>
+      <p>点击任意位置，或按空格键继续</p>
+    </div>
+  </div>
+
+  <!-- ========== 提示 ========== -->
+  <div class="host-hint" id="host-hint"></div>
+  <div class="toast-wrap" id="toast-wrap"></div>
+  <div id="modal-root"></div>
+</div>
+
+<!-- ==================================================================
+     AI 接口配置（可选）
+     默认留空 = 离线模式，游戏使用已人工审核的默认题库完整运行。
+     若要启用在线 AI，请填写「你自己的服务端代理地址」，密钥放在服务端环境变量里。
+     详细说明见 README.md「AI 接口配置」一节。
+     ================================================================== -->
+<script>
+window.MI_AI_CONFIG = {
+  // endpoint: 'http://localhost:8787/api/mi',   // 服务端代理地址
+  // model: 'gpt-4o-mini',                       // 由代理转发给大模型
+  // timeout: 6000
+};
+</script>
+
+<!-- ========== 数据层 ========== -->
+<script src="js/data-crops.js"></script>
+<script src="js/data-questions.js"></script>
+<script src="js/data-cases.js"></script>
+
+<!-- ========== 引擎层 ========== -->
+<script src="js/core.js"></script>
+<script src="js/art.js"></script>
+
+<!-- ========== 表现层 ========== -->
+<script src="js/game.js"></script>
+<script src="js/host.js"></script>
+
+<!-- ========== 启动 ========== -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    MI.boot();
+    /* 主持人控制台默认隐藏，由「🎛️ 主持人」按钮（或快捷键 H）点开；
+       缩到窄屏时若已展开则自动收起，保持舞台可读 */
+    window.addEventListener('resize', function () {
+      if (window.innerWidth < 1500 && document.getElementById('host-panel').classList.contains('open')) {
+        document.getElementById('host-panel').classList.remove('open');
+        document.body.classList.remove('host-open');
+        if (MI.fit) MI.fit();
+      }
+    });
+  } catch (err) {
+    console.error('[启动失败]', err);
+    document.getElementById('boot-veil').innerHTML =
+      '<div style="text-align:center;padding:30px;max-width:620px">' +
+      '<div style="font-size:52px">⚠️</div>' +
+      '<h2 style="margin:14px 0 10px">启动遇到问题</h2>' +
+      '<p style="color:#ccc;line-height:1.8">请刷新页面重试。若仍无法运行，请确认 <b>js/</b> 与 <b>css/</b> 目录与 index.html 在同一文件夹内。</p>' +
+      '<pre style="text-align:left;color:#f88;background:rgba(0,0,0,.35);padding:12px;border-radius:8px;overflow:auto;font-size:12px">' + (err && err.message ? err.message : err) + '</pre>' +
+      '</div>';
+  }
+});
+</script>
+</body>
+</html>

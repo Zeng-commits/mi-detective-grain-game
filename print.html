@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>米侦探 · 纸质线索卡（A4 打印版）</title>
+<style>
+  :root{
+    --ink:#1E2440; --gold:#E8B44A; --gold-deep:#C08A1E; --blue:#3E4A7A;
+    --paper:#FFFDF6; --paper2:#F4EAD3; --danger:#D8482E;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;padding:0;background:#E8EAF2;color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Source Han Sans SC",system-ui,sans-serif;
+  }
+  /* ---------- 工具栏 ---------- */
+  .bar{
+    position:sticky;top:0;z-index:20;background:#1D2547;color:#fff;
+    padding:14px 20px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.25);
+  }
+  .bar h1{font-size:17px;margin:0;letter-spacing:.08em}
+  .bar h1 small{display:block;font-size:11px;color:var(--gold);letter-spacing:.2em;font-weight:400;margin-top:2px}
+  .bar .spacer{flex:1}
+  .bar button{
+    border:none;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;
+    background:linear-gradient(140deg,var(--gold),var(--gold-deep));color:#2A1E00;font-family:inherit;
+  }
+  .bar button.ghost{background:rgba(255,255,255,.14);color:#fff}
+  .bar button:hover{filter:brightness(1.08)}
+  .bar label{font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer;background:rgba(255,255,255,.1);padding:8px 12px;border-radius:10px}
+  .tip{background:#FFF4D6;border-left:5px solid var(--gold);margin:16px auto;max-width:210mm;padding:12px 18px;border-radius:8px;font-size:13px;line-height:1.8;color:#6A4A08}
+  .tip b{color:var(--gold-deep)}
+
+  /* ---------- A4 纸张 ---------- */
+  .sheet{
+    width:210mm;min-height:297mm;background:#fff;margin:16px auto;padding:10mm;
+    box-shadow:0 8px 30px rgba(30,36,64,.18);display:flex;flex-direction:column;gap:6mm;
+    page-break-after:always;
+  }
+  .sheet:last-child{page-break-after:auto}
+
+  /* ---------- 线索卡 ---------- */
+  .clip{
+    flex:1;border:3px solid var(--gold-deep);border-radius:16px;overflow:hidden;
+    display:flex;flex-direction:column;background:linear-gradient(165deg,var(--paper),var(--paper2));
+    position:relative;break-inside:avoid;page-break-inside:avoid;
+  }
+  .clip + .clip{margin-top:0}
+  .clip::before{
+    content:'';position:absolute;inset:6px;border:2px dashed rgba(192,138,30,.35);
+    border-radius:11px;pointer-events:none;
+  }
+  .clip__head{
+    display:flex;justify-content:space-between;align-items:center;
+    background:var(--blue);color:#fff;padding:9px 18px;font-size:13px;font-weight:800;letter-spacing:.12em;
+  }
+  .clip__head b{color:var(--gold)}
+  .clip__body{padding:14px 20px 10px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center}
+  .clip__icon{font-size:44px;line-height:1}
+  .clip__title{font-size:22px;font-weight:800;margin:6px 0 10px;letter-spacing:.02em}
+  .clip__text{font-size:17px;line-height:1.85;margin:0;color:#2A3050;text-align:left;
+    background:rgba(255,255,255,.75);border-left:5px solid var(--gold);border-radius:8px;padding:12px 16px}
+  .clip__hint{
+    margin:10px 0 0;font-size:14px;line-height:1.7;text-align:left;
+    background:#FFF4D6;border-radius:8px;padding:9px 14px;color:#6A4A08;font-weight:600;
+  }
+  .clip__hint b{color:var(--gold-deep)}
+  .clip__foot{
+    border-top:2px dashed rgba(192,138,30,.45);padding:8px 18px;display:flex;justify-content:space-between;
+    font-size:11.5px;color:var(--gold-deep);font-weight:700;letter-spacing:.06em;
+  }
+  /* 空白模板 */
+  .clip--blank .clip__body{border:0}
+  .blank-lines{display:flex;flex-direction:column;gap:9mm;padding:6mm 2mm}
+  .blank-line{border-bottom:2px dashed rgba(30,36,64,.28);height:1px}
+  .blank-tag{font-size:13px;color:#9AA2C0;text-align:left;margin-bottom:2mm}
+  .fill{
+    display:flex;gap:14px;justify-content:center;margin-top:10px;font-size:12.5px;color:#8A90AE;
+  }
+  .fill span{border-bottom:1.5px solid #C7CCE0;padding:0 26px 2px}
+
+  /* 封面卡 */
+  .cover{text-align:center;justify-content:center;align-items:center;background:linear-gradient(165deg,#FFF9E8,#F6E6BE)}
+  .cover .clip__body{padding:26px 30px}
+  .cover h2{font-size:34px;margin:14px 0 6px;letter-spacing:.06em}
+  .cover .sub{font-size:14px;color:var(--gold-deep);letter-spacing:.42em;font-weight:700}
+  .cover .lead{font-size:16px;line-height:2;color:#4A506E;margin:22px 0 0;text-align:left;
+    background:rgba(255,255,255,.7);border-radius:12px;padding:16px 20px}
+  .cover .rule{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;font-size:13px;color:#6A708E}
+  .cover .rule i{background:#fff;border-radius:999px;padding:6px 14px;font-style:normal;font-weight:700;color:var(--blue)}
+
+  @media print{
+    body{background:#fff}
+    .bar,.tip,.no-print{display:none !important}
+    .sheet{margin:0;box-shadow:none;width:auto;min-height:auto;padding:0;gap:0}
+    .clip{margin:0}
+    @page{size:A4;margin:8mm}
+  }
+  @media (max-width:900px){
+    .sheet{width:auto;min-height:auto;padding:14px}
+    .clip{margin-bottom:14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar no-print">
+  <h1>米侦探 · 纸质线索卡<small>A4 PRINTABLE CLUE CARDS</small></h1>
+  <div class="spacer"></div>
+  <label><input type="checkbox" id="opt-hint" checked> 打印提示语</label>
+  <label><input type="checkbox" id="opt-cover" checked> 打印封面卡</label>
+  <label><input type="checkbox" id="opt-blank"> 附加空白模板</label>
+  <button class="ghost" id="btn-preview">刷新预览</button>
+  <button id="btn-print">🖨️ 打印 / 存为 PDF</button>
+</div>
+
+<div class="tip no-print">
+  <b>使用说明：</b>点击「打印 / 存为 PDF」，纸张选 <b>A4</b>、方向<b>纵向</b>、边距<b>默认</b>。
+  每张 A4 纸上下各印一张线索卡，沿中间虚线剪开即可发放。<br>
+  建议流程：第二关快问快答中，学生每答对 <b>3 / 5 / 7 / 9</b> 题发放一张线索卡；集齐后用于第三关最终推理。
+</div>
+
+<div id="sheets"></div>
+
+<script src="js/data-cases.js"></script>
+<script>
+(function(){
+  var covers = {
+    no:'线索卡 · 总览',
+    code:'CLUE-COVER',
+    title:'粮食王国 · 侦探线索包',
+    icon:'🕵️',
+    content:'恭喜你成为米侦探的小助手！这一包里共有 4 张线索卡，它们是破解粮食王国秘密的关键。把每一张卡都看仔细，最后组合起来，就能完成最终推理。',
+    hint:'集齐 4 张线索卡后，回到第三关「最终追捕」，把它们拼在一起完成推理吧！',
+    tags:['侦探装备','集齐 4 张']
+  };
+
+  var blanks = [
+    { no:'线索卡 · 空白', code:'CLUE-____', title:'我的侦探笔记', icon:'✏️', content:'', hint:'', blank:true },
+    { no:'线索卡 · 空白', code:'CLUE-____', title:'我的侦探笔记', icon:'✏️', content:'', hint:'', blank:true }
+  ];
+
+  function cardHTML(c){
+    if(c.blank){
+      return '<div class="clip clip--blank">'+
+        '<div class="clip__head"><span>'+c.no+'</span><b>'+c.code+'</b></div>'+
+        '<div class="clip__body">'+
+          '<div class="clip__icon">'+c.icon+'</div>'+
+          '<div class="clip__title">'+c.title+'</div>'+
+          '<div class="blank-lines">'+
+            '<div class="blank-tag">我在现场观察到的线索：</div>'+
+            '<div class="blank-line"></div><div class="blank-line"></div><div class="blank-line"></div>'+
+            '<div class="blank-line"></div><div class="blank-line"></div>'+
+          '</div>'+
+          '<div class="fill"><span>姓名</span><span>班级</span><span>日期</span></div>'+
+        '</div>'+
+        '<div class="clip__foot"><span>粮食王国 · 米侦探专用</span><span>MIB-DETECTIVE</span></div>'+
+      '</div>';
+    }
+    if(c.cover){
+      return '<div class="clip cover">'+
+        '<div class="clip__head"><span>'+c.no+'</span><b>'+c.code+'</b></div>'+
+        '<div class="clip__body">'+
+          '<div class="clip__icon" style="font-size:56px">'+c.icon+'</div>'+
+          '<h2>'+c.title+'</h2>'+
+          '<div class="sub">MI DETECTIVE</div>'+
+          '<p class="lead">'+c.content+'</p>'+
+          '<div class="rule"><i>线索 1 · 身份证</i><i>线索 2 · 变身术</i><i>线索 3 · 大排行</i><i>线索 4 · 真敌人</i></div>'+
+        '</div>'+
+        '<div class="clip__foot"><span>粮食王国 · 米侦探专用</span><span>集齐 4 张破案</span></div>'+
+      '</div>';
+    }
+    var hint = document.getElementById('opt-hint').checked && c.hint
+      ? '<p class="clip__hint"><b>提示：</b>'+c.hint+'</p>' : '';
+    return '<div class="clip">'+
+      '<div class="clip__head"><span>'+c.no+'</span><b>'+c.code+'</b></div>'+
+      '<div class="clip__body">'+
+        '<div class="clip__icon">'+c.icon+'</div>'+
+        '<div class="clip__title">'+c.title+'</div>'+
+        '<p class="clip__text">'+c.content+'</p>'+
+        hint+
+      '</div>'+
+      '<div class="clip__foot"><span>粮食王国 · 米侦探专用线索</span><span>'+ (c.tags||[]).join(' · ') +'</span></div>'+
+    '</div>';
+  }
+
+  function render(){
+    var list = (window.PAPER_CLUES||[]).slice();
+    var all = [];
+    if(document.getElementById('opt-cover').checked) all.push(covers);
+    all = all.concat(list);
+    if(document.getElementById('opt-blank').checked) all = all.concat(blanks);
+
+    var html = '';
+    for(var i=0;i<all.length;i+=2){
+      html += '<div class="sheet">' + cardHTML(all[i]) + (all[i+1]?cardHTML(all[i+1]):'') + '</div>';
+    }
+    document.getElementById('sheets').innerHTML = html;
+  }
+
+  ['opt-hint','opt-cover','opt-blank'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', render);
+  });
+  document.getElementById('btn-print').addEventListener('click', function(){ window.print(); });
+  document.getElementById('btn-preview').addEventListener('click', render);
+
+  render();
+})();
+</script>
+</body>
+</html>
