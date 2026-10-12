@@ -26,14 +26,12 @@ node server/proxy.js
 
 **方式 C：GitHub Pages（在线网址，随时可预览）**
 
-部署到 GitHub 后会得到一个**固定在线网址**：
+本项目已经部署到 GitHub Pages，**在线网址**：
 
-```
-https://<你的GitHub用户名>.github.io/mi-detective-grain-game/
-```
+**https://zeng-commits.github.io/mi-detective-grain-game/**
 
 手机、平板、教室电脑打开就能玩，无需拷贝文件；改完代码 `git push` 后约 1 分钟自动更新。
-完整部署步骤见文末 **「十、部署到 GitHub Pages」**。
+部署方法见文末 **「十、部署到 GitHub Pages」**。
 
 ---
 
@@ -289,10 +287,10 @@ git push -u origin main
 2. **Source** 选 **Deploy from a branch**
 3. **Branch** 选 `main`，文件夹选 `/ (root)`
 4. 点 **Save**
-5. 等约 1 分钟，网址生效：
+5. 等约 1 分钟，网址生效（本项目已按此方式部署完成）：
 
 ```
-https://<用户名>.github.io/mi-detective-grain-game/
+https://zeng-commits.github.io/mi-detective-grain-game/
 ```
 
 ### 以后想更新网站
