@@ -768,6 +768,9 @@ body.host-open #stage { padding-right: calc(var(--host-w) + 20px); }
   border: 3px solid var(--gold-deep); border-radius: var(--r-lg); overflow: hidden;
   box-shadow: var(--sh-2); max-width: 640px; margin: 0 auto;
 }
+/* 弹窗摘要卡：不显示线索内容，只显示编号与去向 */
+.clue-reward__card--plain { border-style: dashed; }
+.clue-reward__secret { padding: 18px 22px; text-align: center; font-size: var(--fs-body); color: var(--ink-3); }
 .clue-reward__head { display: flex; justify-content: space-between; background: var(--blue); color: #fff; padding: 10px 18px; font-size: var(--fs-sm); font-weight: 800; letter-spacing: .1em; }
 .clue-reward__body { padding: 20px 24px; text-align: center; }
 .clue-reward__icon { font-size: clamp(40px, 3.6vw, 60px); }

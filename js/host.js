@@ -7,8 +7,7 @@
   var MI = window.MI;
   var U = MI.util, A = MI.audio, S = MI.state;
 
-  /* 纸质线索发放门槛：答对第 N 题时发放下一张 */
-  var CLUE_THRESHOLD = [3, 5, 7, 9];
+  /* 纸质线索：发放时机与对象完全由老师决定，系统不做门槛与提示 */
 
   function panel() { return document.getElementById('host-panel'); }
   function sec(id) { return document.getElementById(id); }
@@ -17,21 +16,15 @@
     return '<button class="hbtn ' + (cls || '') + '" ' + (attr || '') + (disabled ? ' disabled' : '') + '>' + label + '</button>';
   }
 
-  /** 线索卡卡片（弹窗内展示；award 存在时显示已发给哪位同学） */
+  /** 线索卡摘要（弹窗内展示）——只显示编号与去向，内容绝不屏幕显示（防剧透红线） */
   function clueCardHTML(clue, award) {
     var who = award
       ? '<div class="clue-reward__who">已发给：<b>' + U.esc(award.recipient || '未指定同学') + '</b></div>'
       : '';
     return '<div class="clue-reward">' +
-      '<div class="clue-reward__card">' +
+      '<div class="clue-reward__card clue-reward__card--plain">' +
       '<div class="clue-reward__head"><span>' + U.esc(clue.no) + '</span><b>' + U.esc(clue.code) + '</b></div>' +
-      '<div class="clue-reward__body">' +
-      '<div class="clue-reward__icon">' + clue.icon + '</div>' +
-      '<h4>' + U.esc(clue.title) + '</h4>' +
-      '<p>' + U.esc(clue.content) + '</p>' +
-      '<div class="clue-reward__hint">提示：' + U.esc(clue.hint) + '</div>' +
-      '</div>' +
-      '<div class="clue-reward__foot">粮食王国 · 米侦探专用线索　|　' + U.esc((clue.tags || []).join(' · ')) + '</div>' +
+      '<p class="clue-reward__secret">🔒 线索内容只印在纸质卡片上，不在屏幕上显示。</p>' +
       '</div>' + who +
       '</div>';
   }
@@ -134,40 +127,35 @@
           btn('跳过本任务 ▶', '', 'data-a="nexttask"') +
           btn('🔓 直接揭晓真相', 'hbtn--gold', 'data-a="truth"') +
           '</div>' +
-          '<p class="hp__note">本关由孩子上台操作答题，主持人负责引导与加分。</p>';
+          '<p class="hp__note">本关由孩子上台操作答题，主持人负责引导。</p>';
       }
       if (st.phase === 'result') {
         return '<div class="hp__row">' + btn('🔁 再来一局', 'hbtn--gold', 'data-a="restart"') + '</div>' +
-          '<p class="hp__note">可以导出成绩单、打印纸质线索卡分发给同学。</p>';
+          '<p class="hp__note">可以导出课堂记录、打印纸质线索卡分发给同学。</p>';
       }
       return '';
     },
 
     clueHTML: function (st) {
       var mine = window.PAPER_CLUES || [];
-      var unlocked = st.clueUnlocked || [];
       var awards = st.clueAwards || [];
-      var ready = 0;
-      var cards = mine.map(function (c, i) {
+      var cards = mine.map(function (c) {
         var award = awards.filter(function (a) { return a.clueId === c.id; })[0];
-        var isUnlocked = unlocked.indexOf(c.id) >= 0;
-        var cls = award ? 'is-got' : (isUnlocked ? 'is-ready' : 'is-locked');
-        if (isUnlocked && !award) ready++;
+        var cls = award ? 'is-got' : '';
         var state = award
           ? ('已发给 ' + U.esc(award.recipient || '未指定同学'))
-          : (isUnlocked ? '待发放' : ('答对第 ' + CLUE_THRESHOLD[i] + ' 题解锁'));
-        return '<button class="clue-mini ' + cls + '" data-a="clue-award" data-c="' + c.id + '" title="点击发放">' +
-          '<span class="clue-mini__icon">' + c.icon + '</span>' +
+          : '未发放';
+        return '<button class="clue-mini ' + cls + '" data-a="clue-award" data-c="' + c.id + '" title="点击记录发放">' +
+          '<span class="clue-mini__icon">🎁</span>' +
           '<span class="clue-mini__no">' + U.esc(c.no) + '</span>' +
           '<span class="clue-mini__state">' + state + '</span></button>';
       }).join('');
-      return '<div class="hp__cluebar"><span>已发放 <b>' + awards.length + '</b> / ' + mine.length + ' 张' +
-        (ready ? '<i class="hp__ready">待发放 ' + ready + '</i>' : '') + '</span>' +
+      return '<div class="hp__cluebar"><span>已发放 <b>' + awards.length + '</b> / ' + mine.length + ' 张</span>' +
         '<button class="gbtn" data-a="cluereset">重置记录</button></div>' +
         '<div class="hp__cluegrid">' + cards + '</div>' +
         '<div class="hp__row">' + btn('🖨️ 打印全部线索卡', 'hbtn--blue', 'data-a="print"') + '</div>' +
-        '<p class="hp__note">系统只负责提示「有线索了」，<b>发给哪位同学由老师决定</b>。<br>' +
-        '答对第 ' + CLUE_THRESHOLD.join(' / ') + ' 题时自动解锁，点击卡片填写接收同学即可发放。</p>';
+        '<p class="hp__note"><b>线索内容只印在纸质卡片上，屏幕不显示。</b><br>' +
+        '什么时候发、发给谁，完全由老师决定；点击卡片可记录接收同学。</p>';
     },
 
     /* ---------- 事件绑定 ---------- */
@@ -212,29 +200,10 @@
       document.getElementById('hp-close').addEventListener('click', function () { MI.actions.toggleHost(); });
     },
 
-    /* ---------- 纸质线索：解锁（游戏只管提示） ---------- */
-    checkClueReward: function () {
-      var st = S.get();
-      if (!st.clueUnlocked) st.clueUnlocked = [];
-      var newly = [];
-      (window.PAPER_CLUES || []).forEach(function (clue, i) {
-        var th = CLUE_THRESHOLD[i];
-        if (th == null) return;
-        if (MI.rt.l2.correct >= th && st.clueUnlocked.indexOf(clue.id) < 0) {
-          st.clueUnlocked.push(clue.id);
-          newly.push(clue);
-        }
-      });
-      if (!newly.length) return;
-      S.save();
-      host.refresh();
-      MI.refreshTop();
-      /* 只提示「有线索了」——发给哪位同学完全由主持人决定 */
-      var names = newly.map(function (c) { return c.no; }).join('、');
-      MI.hostHint('🎁 ' + names + ' 已解锁，请老师决定发给哪位同学', 5200);
-      MI.toast('🎁 出现新线索，等待老师发放', 'ok');
-      if (MI.say) MI.say('叮——' + names + ' 出现啦！老师，请把线索卡发给您想奖励的同学。', 'happy', 6000);
-    },
+    /* ---------- 纸质线索：发放完全由老师掌握 ----------
+     * 2026-10-12 用户明确：发纸质线索是老师的行为，
+     * 系统不做任何「解锁/有线索了」提示，避免打断课堂节奏。 */
+    checkClueReward: function () { /* 已停用：不再自动解锁、不再弹任何提示 */ },
 
     /* ---------- 纸质线索：发放（完全由主持人决定发给哪位同学） ---------- */
     awardClue: function (clueId) {
@@ -252,11 +221,11 @@
 
       MI.modal.open({
         title: '这张线索卡发给哪位同学？',
-        badge: clue.icon,
+        badge: '🎁',
         size: 'lg',
         body:
-          '<p class="modal__p" style="text-align:center;margin-bottom:16px">系统只负责提示「有线索了」，' +
-          '<b>发给哪位同学由老师决定</b>。</p>' +
+          '<p class="modal__p" style="text-align:center;margin-bottom:16px">线索内容只印在纸质卡片上；' +
+          '<b>什么时候发、发给谁，完全由老师决定</b>。</p>' +
           clueCardHTML(clue, award) +
           '<div class="clue-recipient">' +
           '<label for="clue-recipient">接收同学（姓名 / 学号）</label>' +

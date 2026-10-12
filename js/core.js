@@ -129,8 +129,8 @@
       attempts: 0,
       solved: [],                    // 已破案件 id
       paperClues: [],                // 已发放的线索卡 id（由 clueAwards 派生，供发放记录使用）
-      clueUnlocked: [],              // 游戏自动解锁的线索卡 id —— 只代表「有线索了」，不代表已发放
-      clueAwards: [],                // [{clueId, recipient, at}] 由主持人决定发给哪位同学
+      clueUnlocked: [],              // 已停用（保留兼容旧存档）：发放时机与对象完全由老师决定
+      clueAwards: [],                // [{clueId, recipient, at}] 由主持人记录发给哪位同学
       l2: { queue: [], index: 0, revealed: 'none', difficulty: 'easy', progress: 0 },
       l3: { taskIdx: 0 },
       startedAt: 0

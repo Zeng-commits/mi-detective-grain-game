@@ -505,11 +505,8 @@
   function taskBodyHTML(task) {
     var r = MI.rt.l3;
     if (task.type === 'identify') {
-      return '<div class="clue-list clue-list--compact">' +
-        task.clues.map(function (t, i) {
-          return '<article class="clue-card clue-card--mini" style="animation-delay:' + (i * 0.1) + 's"><div class="clue-card__no">线索 ' + (i + 1) + '</div><p class="clue-card__text">' + U.esc(t) + '</p></article>';
-        }).join('') +
-        '</div><div class="candidate-grid candidate-grid--wide" id="candidate-grid">' +
+      /* 线索内容只印在同学手里的纸质线索卡上，屏幕上绝不显示（合作/保密由学生自己决定） */
+      return '<div class="candidate-grid candidate-grid--wide" id="candidate-grid">' +
         candidateOrder(task.candidates, MI.rt.l3, task.no).map(function (id) {
           var cc = window.getCrop(id);
           return '<button class="candidate" data-crop="' + cc.id + '" style="--c:' + cc.color + ';--ink:' + cc.accent + '">' +
@@ -558,7 +555,7 @@
           } else {
             b.classList.add('is-wrong'); A.wrong(); S.recordAnswer(false);
             setTimeout(function () { b.classList.remove('is-wrong'); }, 900);
-            MI.say('再想想「种植面积第一」和「爆米花」这两条线索。', 'sad');
+            MI.say('先别急——听听手里有线索卡的同学怎么说，把大家的线索拼起来再选。', 'sad');
           }
         });
       });
@@ -711,7 +708,7 @@
       '<div class="result__acts">' +
       '<button class="btn btn--primary" id="btn-again">🔁 再玩一次</button>' +
       '<button class="btn btn--ghost" id="btn-print">🖨️ 打印纸质线索卡</button>' +
-      '<button class="btn btn--gold" id="btn-export">📄 导出成绩单</button>' +
+      '<button class="btn btn--gold" id="btn-export">📄 导出课堂记录</button>' +
       '</div>' +
       '</div>' +
       '</section>';
@@ -908,8 +905,7 @@
         S.get().l2.difficulty = MI.ai.adjustDifficulty(r.wrongStreak, r.rightStreak);
       }
       S.save();
-      /* 触发纸质线索奖励检查 */
-      MI.host.checkClueReward();
+      /* 纸质线索发放完全由老师掌握，系统不做任何解锁/提示（2026-10-12 用户要求） */
       /* 是否已追到目标 */
       if (r.progress >= 100) {
         setTimeout(function () {
