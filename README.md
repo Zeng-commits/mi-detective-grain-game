@@ -24,6 +24,17 @@ node server/proxy.js
 # 浏览器打开 http://127.0.0.1:8787
 ```
 
+**方式 C：GitHub Pages（在线网址，随时可预览）**
+
+部署到 GitHub 后会得到一个**固定在线网址**：
+
+```
+https://<你的GitHub用户名>.github.io/mi-detective-grain-game/
+```
+
+手机、平板、教室电脑打开就能玩，无需拷贝文件；改完代码 `git push` 后约 1 分钟自动更新。
+完整部署步骤见文末 **「十、部署到 GitHub Pages」**。
+
 ---
 
 ## 二、课堂使用流程（一节课约 35–40 分钟）
@@ -243,3 +254,61 @@ MI_API_KEY=sk-你的密钥 MI_MODEL=gpt-4o-mini node server/proxy.js
 - 国家统计局农村司解读 2025 年粮食生产情况（新华社 2025-12-12 报道）
 
 > 题库中所有 `source` 为「常识」的题目均为基础农学与生活常识，已经人工核对；凡是标注年份的数据题均可追溯到上述官方公告。
+
+---
+
+## 十、部署到 GitHub Pages（得到可随时预览的在线网址）
+
+> 本仓库**已经完成 git 初始化和首次提交**，本地代码是干净可推送的状态。
+> 下面 3 步里，只有**第 1 步和第 3 步在 GitHub 网页上做**，第 2 步复制命令执行即可。
+
+### 第 1 步 · 在 GitHub 建一个空仓库
+
+1. 打开 <https://github.com/new>
+2. **Repository name** 填：`mi-detective-grain-game`
+3. 选 **Public**（GitHub Pages 免费版要求仓库公开）
+4. **不要**勾选 "Add a README file" / ".gitignore" / "License"——必须是**完全空的仓库**
+5. 点 **Create repository**
+
+### 第 2 步 · 把本地代码推上去
+
+建好后 GitHub 会显示仓库地址，形如 `https://github.com/<用户名>/mi-detective-grain-game.git`。
+在项目目录执行（把 `<用户名>` 换成你的 GitHub 用户名）：
+
+```bash
+git remote add origin https://github.com/<用户名>/mi-detective-grain-game.git
+git push -u origin main
+```
+
+> **登录方式**：Windows 上会弹出 GitHub 登录窗口，按提示登录即可；
+> 也可以改用 SSH 地址 `git@github.com:<用户名>/mi-detective-grain-game.git`（需先配好 SSH key）。
+
+### 第 3 步 · 开启 GitHub Pages
+
+1. 进入仓库页面 → **Settings** → 左侧 **Pages**
+2. **Source** 选 **Deploy from a branch**
+3. **Branch** 选 `main`，文件夹选 `/ (root)`
+4. 点 **Save**
+5. 等约 1 分钟，网址生效：
+
+```
+https://<用户名>.github.io/mi-detective-grain-game/
+```
+
+### 以后想更新网站
+
+```bash
+git add -A
+git commit -m "更新说明"
+git push
+```
+
+推送后约 1 分钟，网址自动更新。
+
+### 注意事项
+
+- 仓库已包含 `.nojekyll`，避免 GitHub 的 Jekyll 处理干扰页面。
+- `.gitignore` 已排除本地工作记忆目录与发布记录文件，不会上传。
+- **不要把 AI 密钥提交进仓库**——密钥应通过环境变量传给 `server/proxy.js`。
+- GitHub Pages 只托管静态文件，`server/proxy.js` 的 AI 代理**不会**在 Pages 上运行；
+  此时 AI 功能会自动回退到离线题库，**不影响正常上课**。
